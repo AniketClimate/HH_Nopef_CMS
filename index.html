@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Halla Health CMS | Content Management System</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h2>Halla Health CMS Login</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full-width">Login</button>
+        <div class="login-hints">
+          <p class="login-hint"><strong>Admin:</strong> admin / admin123</p>
+          <p class="login-hint"><strong>Data Manager:</strong> datamanager / data123</p>
+          <p class="login-hint"><strong>Editor:</strong> editor / edit123</p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main CMS Interface -->
+  <div id="cmsInterface" class="cms-layout hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-logo">Halla Health CMS</h1>
+        <div class="user-info">
+          <div class="user-avatar">👤</div>
+          <div class="user-details">
+            <span class="user-name" id="currentUserName">Administrator</span>
+            <span class="user-role" id="currentUserRole">Super Admin</span>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <li><button class="nav-item active" data-section="dashboard">📊 Dashboard Overview</button></li>
+          <li><button class="nav-item" data-section="states">🗺️ State Management</button></li>
+          <li><button class="nav-item" data-section="parameters">⚙️ Parameter Management</button></li>
+          <li><button class="nav-item" data-section="bulk">📈 Bulk Operations</button></li>
+          <li><button class="nav-item" data-section="insights">💡 Strategic Insights</button></li>
+          <li><button class="nav-item" data-section="users" data-role="Super Admin,Data Manager">👥 User Management</button></li>
+          <li><button class="nav-item" data-section="audit">📋 Audit Trail</button></li>
+          <li><button class="nav-item" data-section="settings">🔧 Settings</button></li>
+        </ul>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="logoutBtn" class="btn btn--outline btn--sm">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Overview Section -->
+      <section id="dashboard" class="content-section active">
+        <div class="section-header">
+          <h2>Dashboard Overview</h2>
+          <div class="header-actions">
+            <button id="refreshBtn" class="btn btn--outline btn--sm">🔄 Refresh</button>
+            <button id="syncBtn" class="btn btn--primary btn--sm">🔄 Sync Dashboard</button>
+          </div>
+        </div>
+
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-icon">🗺️</div>
+            <div class="stat-content">
+              <h3>Total States</h3>
+              <div class="stat-value" id="totalStates">--</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+              <h3>Parameters Tracked</h3>
+              <div class="stat-value" id="totalParameters">--</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💡</div>
+            <div class="stat-content">
+              <h3>Strategic Insights</h3>
+              <div class="stat-value" id="totalInsights">--</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+              <h3>Active Users</h3>
+              <div class="stat-value" id="totalUsers">--</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-charts">
+          <div class="chart-card">
+            <h3>State Priority Distribution</h3>
+            <div class="chart-container" style="position: relative; height: 300px;">
+              <canvas id="priorityChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Parameter Category Breakdown</h3>
+            <div class="chart-container" style="position: relative; height: 300px;">
+              <canvas id="parameterChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-activity">
+          <div class="activity-card">
+            <h3>Recent Activity</h3>
+            <div class="activity-list" id="recentActivity">
+              <!-- Activities will be populated here -->
+            </div>
+          </div>
+          <div class="activity-card">
+            <h3>System Status</h3>
+            <div class="status-list">
+              <div class="status-item">
+                <span class="status--success">✓</span>
+                <span>Data Validation: Active</span>
+              </div>
+              <div class="status-item">
+                <span class="status--success">✓</span>
+                <span>Backup System: Online</span>
+              </div>
+              <div class="status-item">
+                <span class="status--success">✓</span>
+                <span>Dashboard Sync: Connected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- State Management Section -->
+      <section id="states" class="content-section">
+        <div class="section-header">
+          <h2>State Management</h2>
+          <div class="header-actions">
+            <button id="addStateBtn" class="btn btn--primary">➕ Add State</button>
+            <button id="exportStatesBtn" class="btn btn--outline">📥 Export CSV</button>
+            <button id="importStatesBtn" class="btn btn--outline">📤 Import CSV</button>
+          </div>
+        </div>
+
+        <div class="content-toolbar">
+          <div class="toolbar-group">
+            <input type="text" id="stateSearch" class="form-control search-input" placeholder="🔍 Search states...">
+            <select id="priorityFilter" class="form-control">
+              <option value="">All Priorities</option>
+              <option value="High Priority">High Priority</option>
+              <option value="Medium Priority">Medium Priority</option>
+              <option value="Low Priority">Low Priority</option>
+            </select>
+            <select id="categoryFilter" class="form-control">
+              <option value="">All Categories</option>
+              <option value="Demographics">Demographics</option>
+              <option value="Digital Infrastructure">Digital Infrastructure</option>
+              <option value="Health System">Health System</option>
+            </select>
+          </div>
+          <div class="view-toggle">
+            <button id="gridViewBtn" class="btn btn--outline btn--sm active">📊 Grid</button>
+            <button id="tableViewBtn" class="btn btn--outline btn--sm">📋 Table</button>
+          </div>
+        </div>
+
+        <div id="statesContainer">
+          <div class="states-grid" id="statesGrid">
+            <!-- States will be populated here -->
+          </div>
+          <div class="states-table hidden" id="statesTable">
+            <table class="data-table">
+              <thead id="tableHeader">
+                <!-- Table headers will be populated -->
+              </thead>
+              <tbody id="tableBody">
+                <!-- Table rows will be populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Parameter Management Section -->
+      <section id="parameters" class="content-section">
+        <div class="section-header">
+          <h2>Parameter Management</h2>
+          <div class="header-actions">
+            <button id="addParameterBtn" class="btn btn--primary">➕ Add Parameter</button>
+            <button id="exportParametersBtn" class="btn btn--outline">📥 Export</button>
+          </div>
+        </div>
+
+        <div class="content-toolbar">
+          <input type="text" id="parameterSearch" class="form-control search-input" placeholder="🔍 Search parameters...">
+          <select id="parameterCategoryFilter" class="form-control">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="parameters-container" id="parametersContainer">
+          <!-- Parameters will be populated here -->
+        </div>
+      </section>
+
+      <!-- Bulk Operations Section -->
+      <section id="bulk" class="content-section">
+        <div class="section-header">
+          <h2>Bulk Operations</h2>
+          <div class="header-actions">
+            <button id="bulkTemplateBtn" class="btn btn--outline">📄 Download Template</button>
+          </div>
+        </div>
+
+        <div class="bulk-operations-grid">
+          <div class="bulk-card">
+            <h3>📤 Bulk Import</h3>
+            <p>Import state data from CSV or Excel files with validation.</p>
+            <div class="bulk-actions">
+              <input type="file" id="bulkImportFile" accept=".csv,.xlsx,.xls" style="display: none;">
+              <button id="selectImportFile" class="btn btn--primary">Select File</button>
+              <button id="validateImport" class="btn btn--outline" disabled>Validate Data</button>
+              <button id="executeImport" class="btn btn--success" disabled>Import Data</button>
+            </div>
+            <div id="importProgress" class="progress-container hidden">
+              <div class="progress-bar">
+                <div class="progress-fill" id="importProgressFill"></div>
+              </div>
+              <span id="importProgressText">0%</span>
+            </div>
+          </div>
+
+          <div class="bulk-card">
+            <h3>📥 Bulk Export</h3>
+            <p>Export state data in various formats with custom filters.</p>
+            <div class="bulk-actions">
+              <select id="exportFormat" class="form-control mb-8">
+                <option value="csv">CSV Format</option>
+                <option value="json">JSON Format</option>
+                <option value="excel">Excel Format</option>
+              </select>
+              <button id="exportAllStates" class="btn btn--primary">Export All States</button>
+              <button id="exportSelected" class="btn btn--outline">Export Selected</button>
+            </div>
+          </div>
+
+          <div class="bulk-card">
+            <h3>🔄 Bulk Update</h3>
+            <p>Update multiple states with the same parameter values.</p>
+            <div class="bulk-actions">
+              <select id="bulkUpdateParameter" class="form-control mb-8">
+                <option value="">Select Parameter</option>
+              </select>
+              <input type="text" id="bulkUpdateValue" class="form-control mb-8" placeholder="New value">
+              <button id="selectStatesForUpdate" class="btn btn--outline">Select States</button>
+              <button id="executeBulkUpdate" class="btn btn--warning" disabled>Update Selected</button>
+            </div>
+          </div>
+
+          <div class="bulk-card">
+            <h3>🗑️ Bulk Delete</h3>
+            <p>Delete multiple states with confirmation and audit trail.</p>
+            <div class="bulk-actions">
+              <button id="selectStatesForDelete" class="btn btn--outline">Select States</button>
+              <button id="executeBulkDelete" class="btn btn--error" disabled>Delete Selected</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="bulkResultsContainer" class="hidden">
+          <h3>Operation Results</h3>
+          <div id="bulkResults" class="results-container">
+            <!-- Results will be displayed here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Strategic Insights Section -->
+      <section id="insights" class="content-section">
+        <div class="section-header">
+          <h2>Strategic Insights</h2>
+          <div class="header-actions">
+            <button id="addInsightBtn" class="btn btn--primary">➕ Create Insight</button>
+            <button id="manageTemplatesBtn" class="btn btn--outline">📝 Templates</button>
+          </div>
+        </div>
+
+        <div class="content-toolbar">
+          <input type="text" id="insightSearch" class="form-control search-input" placeholder="🔍 Search insights...">
+          <select id="insightStatusFilter" class="form-control">
+            <option value="">All Status</option>
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+          <select id="insightCategoryFilter" class="form-control">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+
+        <div class="insights-container" id="insightsContainer">
+          <!-- Insights will be populated here -->
+        </div>
+      </section>
+
+      <!-- User Management Section -->
+      <section id="users" class="content-section">
+        <div class="section-header">
+          <h2>User Management</h2>
+          <div class="header-actions">
+            <button id="addUserBtn" class="btn btn--primary">➕ Add User</button>
+            <button id="exportUsersBtn" class="btn btn--outline">📥 Export</button>
+          </div>
+        </div>
+
+        <div class="users-grid" id="usersGrid">
+          <!-- Users will be populated here -->
+        </div>
+      </section>
+
+      <!-- Audit Trail Section -->
+      <section id="audit" class="content-section">
+        <div class="section-header">
+          <h2>Audit Trail</h2>
+          <div class="header-actions">
+            <button id="exportAuditBtn" class="btn btn--outline">📥 Export Audit Log</button>
+            <button id="clearAuditBtn" class="btn btn--outline">🗑️ Clear Old Logs</button>
+          </div>
+        </div>
+
+        <div class="content-toolbar">
+          <input type="text" id="auditSearch" class="form-control search-input" placeholder="🔍 Search audit logs...">
+          <select id="auditActionFilter" class="form-control">
+            <option value="">All Actions</option>
+            <option value="create">Create</option>
+            <option value="update">Update</option>
+            <option value="delete">Delete</option>
+            <option value="login">Login</option>
+            <option value="export">Export</option>
+          </select>
+          <input type="date" id="auditDateFilter" class="form-control">
+        </div>
+
+        <div class="audit-container" id="auditContainer">
+          <!-- Audit logs will be populated here -->
+        </div>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings" class="content-section">
+        <div class="section-header">
+          <h2>System Settings</h2>
+        </div>
+
+        <div class="settings-grid">
+          <div class="setting-card">
+            <h3>🔒 Security Settings</h3>
+            <div class="setting-actions">
+              <button id="changePasswordBtn" class="btn btn--outline">Change Password</button>
+              <button id="sessionSettingsBtn" class="btn btn--outline">Session Settings</button>
+              <button id="accessControlBtn" class="btn btn--outline">Access Control</button>
+            </div>
+          </div>
+          
+          <div class="setting-card">
+            <h3>💾 Data Management</h3>
+            <div class="setting-actions">
+              <button id="backupBtn" class="btn btn--outline">Create Backup</button>
+              <button id="restoreBtn" class="btn btn--outline">Restore Data</button>
+              <button id="validateDataBtn" class="btn btn--outline">Validate Data</button>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <h3>🔄 Dashboard Sync</h3>
+            <div class="setting-actions">
+              <button id="testSyncBtn" class="btn btn--outline">Test Connection</button>
+              <button id="forceSyncBtn" class="btn btn--outline">Force Sync</button>
+              <button id="syncSettingsBtn" class="btn btn--outline">Sync Settings</button>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <h3>📊 System Health</h3>
+            <div class="setting-actions">
+              <button id="systemInfoBtn" class="btn btn--outline">System Info</button>
+              <button id="performanceBtn" class="btn btn--outline">Performance</button>
+              <button id="maintenanceBtn" class="btn btn--outline">Maintenance</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Edit State Modal -->
+  <div id="editStateModal" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h3 id="stateModalTitle">Edit State</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="stateForm">
+        <div class="form-tabs">
+          <button type="button" class="tab-btn active" data-tab="basic">Basic Info</button>
+          <button type="button" class="tab-btn" data-tab="demographics">Demographics</button>
+          <button type="button" class="tab-btn" data-tab="digital">Digital Infrastructure</button>
+          <button type="button" class="tab-btn" data-tab="health">Health System</button>
+          <button type="button" class="tab-btn" data-tab="economic">Economic</button>
+        </div>
+        
+        <div class="tab-content active" id="basicTab">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="stateName" class="form-label">State Name *</label>
+              <input type="text" id="stateName" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="priorityCategory" class="form-label">Priority Category *</label>
+              <select id="priorityCategory" class="form-control" required>
+                <option value="">Select Priority</option>
+                <option value="High Priority">High Priority</option>
+                <option value="Medium Priority">Medium Priority</option>
+                <option value="Low Priority">Low Priority</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="demographicsTab">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="populationCurrent" class="form-label">Current Population</label>
+              <input type="number" id="populationCurrent" class="form-control" min="1000">
+            </div>
+            <div class="form-group">
+              <label for="populationProjected" class="form-label">Projected Population (2030)</label>
+              <input type="number" id="populationProjected" class="form-control" min="1000">
+            </div>
+            <div class="form-group">
+              <label for="youthPercentage" class="form-label">Youth Percentage (18-30) %</label>
+              <input type="number" id="youthPercentage" class="form-control" min="0" max="100" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="ruralUrbanRatio" class="form-label">Rural/Urban Ratio</label>
+              <input type="number" id="ruralUrbanRatio" class="form-control" min="0.1" max="20" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="literacyRate" class="form-label">Literacy Rate %</label>
+              <input type="number" id="literacyRate" class="form-control" min="0" max="100" step="0.1">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="digitalTab">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="internetPenetration" class="form-label">Internet Penetration %</label>
+              <input type="number" id="internetPenetration" class="form-control" min="0" max="100" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="smartphonePenetration" class="form-label">Smartphone Penetration %</label>
+              <input type="number" id="smartphonePenetration" class="form-control" min="0" max="100" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="digitalLiteracy" class="form-label">Digital Literacy Rate %</label>
+              <input type="number" id="digitalLiteracy" class="form-control" min="0" max="100" step="0.1">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="healthTab">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="healthInfrastructureScore" class="form-label">Health Infrastructure Score (0-10)</label>
+              <input type="number" id="healthInfrastructureScore" class="form-control" min="0" max="10" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="abdmAdoptionRate" class="form-label">ABDM Adoption Rate %</label>
+              <input type="number" id="abdmAdoptionRate" class="form-control" min="0" max="100" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="healthAppUsage" class="form-label">Health App Usage %</label>
+              <input type="number" id="healthAppUsage" class="form-control" min="0" max="100" step="0.1">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="economicTab">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="perCapitaIncome" class="form-label">Per Capita Income (₹)</label>
+              <input type="number" id="perCapitaIncome" class="form-control" min="10000">
+            </div>
+            <div class="form-group">
+              <label for="governmentHealthSpending" class="form-label">Government Health Spending per Capita (₹)</label>
+              <input type="number" id="governmentHealthSpending" class="form-control" min="1000">
+            </div>
+            <div class="form-group">
+              <label for="climateVulnerabilityScore" class="form-label">Climate Vulnerability Score (0-10)</label>
+              <input type="number" id="climateVulnerabilityScore" class="form-control" min="0" max="10" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="marketAttractivenessScore" class="form-label">Market Attractiveness Score (0-10)</label>
+              <input type="number" id="marketAttractivenessScore" class="form-control" min="0" max="10" step="0.01">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn--outline modal-cancel">Cancel</button>
+          <button type="button" id="previewState" class="btn btn--outline">Preview</button>
+          <button type="submit" class="btn btn--primary">Save State</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Parameter Modal -->
+  <div id="editParameterModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="parameterModalTitle">Edit Parameter</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="parameterForm">
+        <div class="form-group">
+          <label for="parameterName" class="form-label">Parameter Name *</label>
+          <input type="text" id="parameterName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="parameterType" class="form-label">Type *</label>
+          <select id="parameterType" class="form-control" required>
+            <option value="">Select Type</option>
+            <option value="numeric">Numeric</option>
+            <option value="percentage">Percentage</option>
+            <option value="currency">Currency</option>
+            <option value="score">Score</option>
+            <option value="text">Text</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="parameterCategory" class="form-label">Category *</label>
+          <input type="text" id="parameterCategory" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="parameterUnit" class="form-label">Unit *</label>
+          <input type="text" id="parameterUnit" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="validationMin" class="form-label">Minimum Value</label>
+          <input type="number" id="validationMin" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="validationMax" class="form-label">Maximum Value</label>
+          <input type="number" id="validationMax" class="form-control">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn--outline modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save Parameter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Insight Modal -->
+  <div id="editInsightModal" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h3 id="insightModalTitle">Edit Strategic Insight</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="insightForm">
+        <div class="form-group">
+          <label for="insightTitle" class="form-label">Title *</label>
+          <input type="text" id="insightTitle" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="insightCategory" class="form-label">Category *</label>
+          <select id="insightCategory" class="form-control" required>
+            <option value="">Select Category</option>
+            <option value="Strategy">Strategy</option>
+            <option value="Market Analysis">Market Analysis</option>
+            <option value="Implementation">Implementation</option>
+            <option value="Risk Assessment">Risk Assessment</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="insightContent" class="form-label">Content *</label>
+          <textarea id="insightContent" class="form-control rich-editor" rows="10" required></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn--outline" id="previewInsight">Preview</button>
+          <button type="button" class="btn btn--outline modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save Insight</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="userModalTitle">Edit User</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="userForm">
+        <div class="form-group">
+          <label for="userName" class="form-label">Full Name *</label>
+          <input type="text" id="userName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="userUsername" class="form-label">Username *</label>
+          <input type="text" id="userUsername" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="userEmail" class="form-label">Email *</label>
+          <input type="email" id="userEmail" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="userRole" class="form-label">Role *</label>
+          <select id="userRole" class="form-control" required>
+            <option value="">Select Role</option>
+            <option value="Super Admin">Super Admin</option>
+            <option value="Data Manager">Data Manager</option>
+            <option value="Content Editor">Content Editor</option>
+            <option value="Viewer">Viewer</option>
+          </select>
+        </div>
+        <div class="form-group" id="passwordGroup">
+          <label for="userPassword" class="form-label">Password *</label>
+          <input type="password" id="userPassword" class="form-control">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn--outline modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content modal-small">
+      <div class="modal-header">
+        <h3>Confirm Action</h3>
+      </div>
+      <p id="confirmMessage">Are you sure you want to proceed?</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn--outline" id="confirmCancel">Cancel</button>
+        <button type="button" class="btn btn--error" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- File input for imports -->
+  <input type="file" id="fileImportInput" accept=".json" style="display: none;">
+
+  <script src="app.js"></script>
+</body>
+</html>

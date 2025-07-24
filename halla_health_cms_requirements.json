@@ -1,0 +1,176 @@
+{
+  "requirements": {
+    "core_features": {
+      "user_management": {
+        "roles": [
+          "Super Admin",
+          "State Admin",
+          "Data Manager",
+          "Content Editor",
+          "Viewer"
+        ],
+        "permissions": {
+          "super_admin": [
+            "full_access",
+            "user_management",
+            "system_settings",
+            "bulk_operations",
+            "data_export"
+          ],
+          "state_admin": [
+            "state_data_management",
+            "local_user_management",
+            "state_insights_edit"
+          ],
+          "data_manager": [
+            "parameter_management",
+            "data_validation",
+            "bulk_import",
+            "data_sync"
+          ],
+          "content_editor": [
+            "strategic_insights_edit",
+            "content_management"
+          ],
+          "viewer": [
+            "read_only",
+            "dashboard_view"
+          ]
+        }
+      },
+      "data_management": {
+        "state_parameters": [
+          "population_current",
+          "population_projected",
+          "youth_percentage",
+          "internet_penetration",
+          "smartphone_penetration",
+          "digital_literacy",
+          "per_capita_income",
+          "government_health_spending",
+          "health_infrastructure_score",
+          "abdm_adoption_rate",
+          "health_app_usage",
+          "rural_urban_ratio",
+          "literacy_rate",
+          "climate_vulnerability_score",
+          "market_attractiveness_score"
+        ],
+        "validation_rules": {
+          "numeric_fields": [
+            "population_current",
+            "population_projected",
+            "youth_percentage"
+          ],
+          "percentage_fields": [
+            "internet_penetration",
+            "smartphone_penetration",
+            "digital_literacy"
+          ],
+          "currency_fields": [
+            "per_capita_income",
+            "government_health_spending"
+          ],
+          "score_fields": [
+            "health_infrastructure_score",
+            "market_attractiveness_score"
+          ]
+        }
+      },
+      "crud_operations": {
+        "create": "Add new state records and parameters",
+        "read": "View and filter state data with advanced search",
+        "update": "Edit existing parameters with validation",
+        "delete": "Remove records with confirmation and audit trail"
+      },
+      "bulk_operations": {
+        "bulk_import": "CSV/Excel import with validation",
+        "bulk_export": "Export filtered data in multiple formats",
+        "bulk_update": "Mass update of selected parameters",
+        "bulk_delete": "Mass deletion with confirmation"
+      }
+    },
+    "technical_features": {
+      "real_time_sync": {
+        "dashboard_updates": "Live synchronization with main dashboard",
+        "conflict_resolution": "Handle concurrent edits with version control",
+        "event_driven": "Push updates to connected clients"
+      },
+      "data_validation": {
+        "client_side": "JavaScript validation for immediate feedback",
+        "server_side": "Backend validation for data integrity",
+        "business_rules": "Custom validation rules for healthcare data",
+        "error_handling": "Comprehensive error messaging and recovery"
+      },
+      "security": {
+        "authentication": "Secure login with role-based access",
+        "authorization": "Granular permission system",
+        "audit_trail": "Complete change history and user actions",
+        "data_encryption": "Secure data transmission and storage"
+      }
+    },
+    "ui_ux_features": {
+      "responsive_design": "Mobile-first design for all device types",
+      "intuitive_navigation": "Clear menu structure and breadcrumbs",
+      "data_visualization": "Charts and graphs for parameter comparison",
+      "search_filters": "Advanced filtering and sorting capabilities",
+      "bulk_actions_ui": "Checkbox selection and batch operation interface"
+    }
+  },
+  "architecture": {
+    "frontend": {
+      "framework": "Modern JavaScript (HTML5, CSS3, ES6+)",
+      "libraries": [
+        "Chart.js for visualization",
+        "DataTables for advanced tables",
+        "SweetAlert for confirmations"
+      ],
+      "components": [
+        "Login/Authentication module",
+        "Dashboard overview",
+        "State management interface",
+        "Parameter editor",
+        "Bulk operations panel",
+        "User management",
+        "Strategic insights editor"
+      ]
+    },
+    "backend_simulation": {
+      "data_storage": "LocalStorage for demo (with JSON structure)",
+      "session_management": "Browser-based session handling",
+      "validation_engine": "Client-side validation with configurable rules",
+      "audit_system": "Change tracking and history"
+    },
+    "data_flow": {
+      "state_data": "Centralized state management with real-time updates",
+      "user_actions": "Event-driven architecture for user interactions",
+      "validation_pipeline": "Multi-stage validation process",
+      "sync_mechanism": "Automatic synchronization with main dashboard"
+    }
+  },
+  "sample_data": {
+    "states": {
+      "delhi": {
+        "name": "Delhi",
+        "population_current": 32900000,
+        "population_projected": 37500000,
+        "youth_percentage": 35.2,
+        "internet_penetration": 75.0,
+        "smartphone_penetration": 82.0,
+        "digital_literacy": 72.0,
+        "per_capita_income": 462000,
+        "government_health_spending": 8500,
+        "health_infrastructure_score": 8.2,
+        "abdm_adoption_rate": 45.0,
+        "health_app_usage": 68.0,
+        "rural_urban_ratio": 3.0,
+        "literacy_rate": 86.2,
+        "climate_vulnerability_score": 6.5,
+        "market_attractiveness_score": 7.25,
+        "priority_category": "High Priority",
+        "last_updated": "2025-07-24",
+        "updated_by": "admin"
+      }
+    }
+  }
+}
